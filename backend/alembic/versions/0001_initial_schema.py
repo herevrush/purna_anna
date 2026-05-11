@@ -1,13 +1,13 @@
 """initial schema
 
-Revision ID: 0001
+Revision ID: 0001_initial_schema
 Revises:
 Create Date: 2024-01-01 00:00:00.000000
 """
 from alembic import op
 import sqlalchemy as sa
 
-revision = "0001"
+revision = "0001_initial_schema"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -27,6 +27,9 @@ def upgrade() -> None:
         ),
         sa.Column("email", sa.String(), nullable=False),
         sa.Column("hashed_password", sa.String(), nullable=False),
+        sa.Column("full_name", sa.String(), nullable=True),
+        sa.Column("is_admin", sa.Boolean(), server_default=sa.text("false"), nullable=False),
+        sa.Column("refresh_token", sa.String(), nullable=True),
         sa.Column("is_active", sa.Boolean(), server_default=sa.text("true"), nullable=False),
         sa.Column(
             "created_at",
@@ -49,6 +52,8 @@ def upgrade() -> None:
         sa.Column("name", sa.String(), nullable=False),
         sa.Column("slug", sa.String(), nullable=False),
         sa.Column("description", sa.Text(), nullable=True),
+        sa.Column("parent_id", sa.UUID(), nullable=True),
+        sa.ForeignKeyConstraint(["parent_id"], ["categories.id"], ondelete="SET NULL"),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("slug"),
     )
@@ -62,6 +67,7 @@ def upgrade() -> None:
             nullable=False,
         ),
         sa.Column("name", sa.String(), nullable=False),
+        sa.Column("slug", sa.String(), nullable=False),
         sa.Column("description", sa.Text(), nullable=True),
         sa.Column("price", sa.Numeric(10, 2), nullable=False),
         sa.Column("stock_quantity", sa.Integer(), server_default=sa.text("0"), nullable=False),
@@ -78,6 +84,7 @@ def upgrade() -> None:
         sa.CheckConstraint("stock_quantity >= 0", name="ck_products_stock_non_negative"),
         sa.ForeignKeyConstraint(["category_id"], ["categories.id"], ondelete="SET NULL"),
         sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("slug"),
     )
     op.create_index("ix_products_category_id", "products", ["category_id"])
 
@@ -108,7 +115,12 @@ def upgrade() -> None:
             nullable=False,
         ),
         sa.Column("user_id", sa.UUID(), nullable=False),
-        sa.Column("status", sa.String(20), server_default="pending", nullable=False),
+        sa.Column(
+            "status",
+            sa.String(20),
+            server_default=sa.text("'pending'"),
+            nullable=False,
+        ),
         sa.Column("total", sa.Numeric(10, 2), nullable=False),
         sa.Column(
             "created_at",
@@ -120,6 +132,7 @@ def upgrade() -> None:
             "status IN ('pending','confirmed','shipped','delivered','cancelled')",
             name="ck_orders_status_valid",
         ),
+        sa.CheckConstraint("total >= 0", name="ck_orders_total_non_negative"),
         sa.ForeignKeyConstraint(["user_id"], ["users.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -140,7 +153,7 @@ def upgrade() -> None:
         sa.CheckConstraint("quantity > 0", name="ck_order_items_quantity_positive"),
         sa.CheckConstraint("unit_price > 0", name="ck_order_items_unit_price_positive"),
         sa.ForeignKeyConstraint(["order_id"], ["orders.id"], ondelete="CASCADE"),
-        sa.ForeignKeyConstraint(["product_id"], ["products.id"], ondelete="RESTRICT"),
+        sa.ForeignKeyConstraint(["product_id"], ["products.id"], ondelete="SET NULL"),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index("ix_order_items_order_id", "order_items", ["order_id"])
