@@ -1,3 +1,4 @@
+import uuid
 from pydantic import BaseModel
 from typing import Optional
 
@@ -9,16 +10,17 @@ class CategoryBase(BaseModel):
 
 
 class CategoryCreate(CategoryBase):
-    pass
+    parent_id: Optional[uuid.UUID] = None
 
 
 class CategoryUpdate(BaseModel):
     name: Optional[str] = None
     slug: Optional[str] = None
     description: Optional[str] = None
+    parent_id: Optional[uuid.UUID] = None
 
 
 class CategoryRead(CategoryBase):
-    id: int
-
+    id: uuid.UUID
+    parent_id: Optional[uuid.UUID] = None
     model_config = {"from_attributes": True}

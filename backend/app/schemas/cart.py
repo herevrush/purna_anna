@@ -1,11 +1,11 @@
+import uuid
 from pydantic import BaseModel
 from typing import Optional
-
 from app.schemas.product import ProductRead
 
 
 class CartItemBase(BaseModel):
-    product_id: int
+    product_id: uuid.UUID
     quantity: int = 1
 
 
@@ -18,8 +18,7 @@ class CartItemUpdate(BaseModel):
 
 
 class CartItemRead(CartItemBase):
-    id: int
-    user_id: int
+    id: uuid.UUID
+    user_id: uuid.UUID
     product: Optional[ProductRead] = None
-
     model_config = {"from_attributes": True}

@@ -1,8 +1,8 @@
+import uuid
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
-
-from app.core.deps import get_db, get_current_active_user
+from app.core.deps import get_db, get_current_admin_user
 from app.models.category import Category
 from app.schemas.category import CategoryCreate, CategoryRead, CategoryUpdate
 
@@ -15,7 +15,7 @@ def list_categories(db: Session = Depends(get_db)):
 
 
 @router.get("/{category_id}", response_model=CategoryRead)
-def get_category(category_id: int, db: Session = Depends(get_db)):
+def get_category(category_id: uuid.UUID, db: Session = Depends(get_db)):
     cat = db.query(Category).filter(Category.id == category_id).first()
     if not cat:
         raise HTTPException(status_code=404, detail="Category not found")
@@ -26,10 +26,9 @@ def get_category(category_id: int, db: Session = Depends(get_db)):
 def create_category(
     cat_in: CategoryCreate,
     db: Session = Depends(get_db),
-    _: object = Depends(get_current_active_user),
+    _: object = Depends(get_current_admin_user),
 ):
-    existing = db.query(Category).filter(Category.slug == cat_in.slug).first()
-    if existing:
+    if db.query(Category).filter(Category.slug == cat_in.slug).first():
         raise HTTPException(status_code=400, detail="Slug already exists")
     cat = Category(**cat_in.model_dump())
     db.add(cat)
@@ -40,10 +39,10 @@ def create_category(
 
 @router.put("/{category_id}", response_model=CategoryRead)
 def update_category(
-    category_id: int,
+    category_id: uuid.UUID,
     cat_in: CategoryUpdate,
     db: Session = Depends(get_db),
-    _: object = Depends(get_current_active_user),
+    _: object = Depends(get_current_admin_user),
 ):
     cat = db.query(Category).filter(Category.id == category_id).first()
     if not cat:
@@ -57,9 +56,9 @@ def update_category(
 
 @router.delete("/{category_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_category(
-    category_id: int,
+    category_id: uuid.UUID,
     db: Session = Depends(get_db),
-    _: object = Depends(get_current_active_user),
+    _: object = Depends(get_current_admin_user),
 ):
     cat = db.query(Category).filter(Category.id == category_id).first()
     if not cat:

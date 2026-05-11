@@ -1,0 +1,3 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+env = ["DATABASE_URL=postgresql://postgres:postgres@localhost/purna_test"]
