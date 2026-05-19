@@ -23,30 +23,27 @@ depends_on = None
 
 def upgrade() -> None:
     # users: full_name
-    try:
-        op.add_column("users", sa.Column("full_name", sa.String(), nullable=True))
-    except Exception:
-        pass
+    
+    #op.add_column("users", sa.Column("full_name", sa.String(), nullable=True))
+    
 
     # users: is_admin
-    try:
-        op.add_column(
-            "users",
-            sa.Column("is_admin", sa.Boolean(), server_default=sa.text("false"), nullable=False),
-        )
-    except Exception:
-        pass
+    
+    #op.add_column(
+    #        "users",
+    #        sa.Column("is_admin", sa.Boolean(), server_default=sa.text("false"), nullable=False),
+    #    )
+   
 
     # users: refresh_token
-    try:
-        op.add_column("users", sa.Column("refresh_token", sa.String(), nullable=True))
-    except Exception:
-        pass
+    
+    #op.add_column("users", sa.Column("refresh_token", sa.String(), nullable=True))
+    
 
     # categories: parent_id (self-referencing FK)
-    try:
-        op.add_column("categories", sa.Column("parent_id", sa.UUID(), nullable=True))
-        op.create_foreign_key(
+    
+    #op.add_column("categories", sa.Column("parent_id", sa.UUID(), nullable=True))
+    op.create_foreign_key(
             "fk_categories_parent_id",
             "categories",
             "categories",
@@ -54,15 +51,13 @@ def upgrade() -> None:
             ["id"],
             ondelete="SET NULL",
         )
-    except Exception:
-        pass
+    
 
     # products: slug
-    try:
-        op.add_column("products", sa.Column("slug", sa.String(), nullable=True))
+    
+    #op.add_column("products", sa.Column("slug", sa.String(), nullable=True))
         # Allow NULL during backfill; teams must populate slug before adding NOT NULL constraint.
-    except Exception:
-        pass
+    
 
 
 def downgrade() -> None:
