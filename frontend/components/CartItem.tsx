@@ -29,7 +29,7 @@ export default function CartItemRow({ item }: Props) {
 
       <div className="flex-1 min-w-0">
         <p className="font-semibold text-gray-800 truncate">{item.product.name}</p>
-        <p className="text-sm text-green-700 font-medium">${item.product.price.toFixed(2)} each</p>
+        <p className="text-sm text-green-700 font-medium">${item.product.price} each</p>
       </div>
 
       <div className="flex items-center gap-2">

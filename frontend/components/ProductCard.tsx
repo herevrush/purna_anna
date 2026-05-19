@@ -54,7 +54,7 @@ export default function ProductCard({ product }: Props) {
           {product.description && (
             <p className="text-sm text-gray-500 line-clamp-2 mb-2">{product.description}</p>
           )}
-          <p className="text-lg font-bold text-green-700">${product.price.toFixed(2)}</p>
+          <p className="text-lg font-bold text-green-700">${product.price}</p>
         </div>
       </Link>
       <div className="px-4 pb-4">

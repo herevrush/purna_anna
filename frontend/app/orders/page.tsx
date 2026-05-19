@@ -70,7 +70,7 @@ export default function OrdersPage() {
                   <p className="text-sm text-gray-500">{order.items.length} item{order.items.length !== 1 ? 's' : ''}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-green-700 text-lg">${order.total.toFixed(2)}</p>
+                  <p className="font-bold text-green-700 text-lg">${order.total}</p>
                   <span className={`inline-block mt-1 px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${
                     order.status === 'completed' ? 'bg-green-100 text-green-700' :
                     order.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
