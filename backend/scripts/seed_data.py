@@ -8,12 +8,13 @@ from decimal import Decimal
 
 from passlib.context import CryptContext
 from sqlalchemy import create_engine, text
+import hashlib
 
 DATABASE_URL = os.environ.get(
     "DATABASE_URL", "postgresql://postgres:password@localhost:5432/purna"
 )
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["scrypt"], deprecated="auto")
 
 CATEGORIES = [
     {"id": str(uuid.uuid4()), "name": "Produce", "slug": "produce", "description": "Fresh fruits and vegetables"},
@@ -52,10 +53,13 @@ PRODUCTS = [
     {"id": str(uuid.uuid4()), "name": "Sparkling Water", "slug": "sparkling-water", "description": "Unsweetened sparkling water, 12-pack", "price": Decimal("8.99"), "stock_quantity": 100, "category_id": _cat["beverages"], "image_url": None, "is_active": True},
 ]
 
+password = "demo1234"
+hashed_pw  = hashlib.sha256(password.encode()).hexdigest()
+
 DEMO_USER = {
     "id": str(uuid.uuid4()),
     "email": "demo@purna.dev",
-    "hashed_password": pwd_context.hash("demo1234"),
+    "hashed_password": pwd_context.hash(hashed_pw),
     "full_name": "Demo User",
     "is_active": True,
 }
